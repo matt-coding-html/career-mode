@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Mode Generator</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0f172a;
+            --accent: #f59e0b;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 4px solid var(--accent);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 1px;
+        }
+        
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin: 30px 0 20px;
+            border-bottom: 3px solid var(--primary);
+            gap: 2px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background-color: #e2e8f0;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:hover {
+            background-color: #cbd5e1;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .radio-option input {
+            cursor: pointer;
+        }
+        
+        .result {
+            margin-top: 30px;
+            border-top: 2px dashed var(--border);
+            padding-top: 25px;
+        }
+        
+        .result h3 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+        
+        .result-card {
+            background-color: var(--card-bg);
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .result-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .attribute {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .attribute span:first-child {
+            font-weight: bold;
+            min-width: 80px;
+            color: var(--text-light);
+        }
+        
+        .attribute span:last-child {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .selection-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .selection-area > div {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            
+            .tab {
+                border-radius: 6px;
+                margin-bottom: 2px;
+            }
+            
+            .tab-content {
+                border-radius: 6px;
+            }
+            
+            .selection-area {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Career Mode Generator</h1>
+            <div class="subtitle">Create your custom football career journey</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="player">Player Career Mode</div>
+            <div class="tab" data-tab="manager">Manager Career Mode</div>
+        </div>
+
+        <div id="playerTab" class="tab-content active">
+            <h2>Player Career Mode</h2>
+            <p>Generate a random player profile to start your career journey.</p>
+            
+            <div class="selection-area">
+                <div class="form-group">
+                    <label for="playerGender">Gender</label>
+                    <select id="playerGender" class="form-control">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="playerCountrySelect">Country</label>
+                    <select id="playerCountrySelect" class="form-control">
+                        <option value="random">Random</option>
+                        <!-- Countries will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+            
+            <button id="generatePlayer" class="btn">
+                Generate Player Profile
+            </button>
+            
+            <div id="playerResult" class="result hidden">
+                <h3>Your Player Profile</h3>
+                <div class="result-card">
+                    <div class="attribute"><span>Name:</span> <span id="playerName"></span></div>
+                    <div class="attribute"><span>Gender:</span> <span id="playerGenderResult"></span></div>
+                    <div class="attribute"><span>Country:</span> <span id="playerCountry"></span></div>
+                    <div class="attribute"><span>Age:</span> <span id="playerAge"></span></div>
+                    <div class="attribute"><span>Height:</span> <span id="playerHeight"></span></div>
+                    <div class="attribute"><span>Weight:</span> <span id="playerWeight"></span></div>
+                    <div class="attribute"><span>Position:</span> <span id="playerPosition"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="managerTab" class="tab-content">
+            <h2>Manager Career Mode</h2>
+            <p>Generate a random manager profile to start your coaching career.</p>
+            
+            <div class="selection-area">
+                <div class="form-group">
+                    <label for="managerGender">Gender</label>
+                    <select id="managerGender" class="form-control">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="managerCountrySelect">Country</label>
+                    <select id="managerCountrySelect" class="form-control">
+                        <option value="random">Random</option>
+                        <!-- Countries will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+            
+            <button id="generateManager" class="btn">
+                Generate Manager Profile
+            </button>
+            
+            <div id="managerResult" class="result hidden">
+                <h3>Your Manager Profile</h3>
+                <div class="result-card">
+                    <div class="attribute"><span>Name:</span> <span id="managerName"></span></div>
+                    <div class="attribute"><span>Gender:</span> <span id="managerGenderResult"></span></div>
+                    <div class="attribute"><span>Country:</span> <span id="managerCountry"></span></div>
+                    <div class="attribute"><span>Age:</span> <span id="managerAge"></span></div>
+                    <div class="attribute"><span>Club:</span> <span id="managerClub"></span></div>
+                    <div class="attribute"><span>Formation:</span> <span id="managerFormation"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Country-specific name databases
+        const countryNames = {
+            "England": {
+                male: {
+                    first: ["James", "Harry", "Oliver", "Jack", "George", "Charlie", "William", "Thomas", "Jacob", "Alfie", "John", "David", "Richard"],
+                    last: ["Smith", "Jones", "Williams", "Taylor", "Brown", "Davies", "Evans", "Wilson", "Thomas", "Johnson", "Roberts", "Robinson", "Thompson"]
+                },
+                female: {
+                    first: ["Olivia", "Emma", "Ava", "Charlotte", "Sophia", "Amelia", "Isla", "Mia", "Emily", "Ella", "Poppy", "Isabella", "Jessica"],
+                    last: ["Smith", "Jones", "Williams", "Taylor", "Brown", "Davies", "Evans", "Wilson", "Thomas", "Johnson", "Roberts", "Robinson", "Thompson"]
+                }
+            },
+            "Spain": {
+                male: {
+                    first: ["Alejandro", "Pablo", "Daniel", "Javier", "Adrian", "Álvaro", "David", "Manuel", "Diego", "Carlos", "Jorge", "Sergio", "Miguel"],
+                    last: ["García", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Martín", "Jiménez", "Ruiz", "Hernández"]
+                },
+                female: {
+                    first: ["Lucía", "Sofía", "María", "Martina", "Paula", "Julia", "Daniela", "Valeria", "Alba", "Emma", "Carla", "Sara", "Noa"],
+                    last: ["García", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Martín", "Jiménez", "Ruiz", "Hernández"]
+                }
+            },
+            "Germany": {
+                male: {
+                    first: ["Maximilian", "Alexander", "Paul", "Leon", "Felix", "Lukas", "Luca", "Jonas", "David", "Noah", "Julian", "Elias", "Niklas"],
+                    last: ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer"]
+                },
+                female: {
+                    first: ["Sophie", "Maria", "Emma", "Hannah", "Anna", "Johanna", "Katharina", "Lena", "Laura", "Leonie", "Sara", "Lina", "Lea"],
+                    last: ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer"]
+                }
+            },
+            "Italy": {
+                male: {
+                    first: ["Francesco", "Alessandro", "Lorenzo", "Matteo", "Andrea", "Leonardo", "Gabriele", "Mattia", "Tommaso", "Riccardo", "Davide", "Giuseppe", "Antonio"],
+                    last: ["Rossi", "Russo", "Ferrari", "Esposito", "Bianchi", "Romano", "Colombo", "Ricci", "Marino", "Greco", "Bruno", "Gallo", "Conti"]
+                },
+                female: {
+                    first: ["Sofia", "Giulia", "Aurora", "Alice", "Ginevra", "Emma", "Giorgia", "Greta", "Beatrice", "Anna", "Chiara", "Sara", "Vittoria"],
+                    last: ["Rossi", "Russo", "Ferrari", "Esposito", "Bianchi", "Romano", "Colombo", "Ricci", "Marino", "Greco", "Bruno", "Gallo", "Conti"]
+                }
+            },
+            "France": {
+                male: {
+                    first: ["Lucas", "Hugo", "Gabriel", "Léo", "Raphael", "Louis", "Jules", "Adam", "Arthur", "Nathan", "Liam", "Ethan", "Mathis"],
+                    last: ["Martin", "Bernard", "Dubois", "Thomas", "Robert", "Richard", "Petit", "Durand", "Leroy", "Moreau", "Simon", "Laurent", "Lefebvre"]
+                },
+                female: {
+                    first: ["Emma", "Jade", "Louise", "Alice", "Chloé", "Léa", "Manon", "Rose", "Anna", "Inès", "Camille", "Lina", "Sarah"],
+                    last: ["Martin", "Bernard", "Dubois", "Thomas", "Robert", "Richard", "Petit", "Durand", "Leroy", "Moreau", "Simon", "Laurent", "Lefebvre"]
+                }
+            },
+            "Brazil": {
+                male: {
+                    first: ["Miguel", "Arthur", "Heitor", "Theo", "Davi", "Gabriel", "Bernardo", "Samuel", "João", "Pedro", "Lorenzo", "Benjamin", "Matheus"],
+                    last: ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins"]
+                },
+                female: {
+                    first: ["Helena", "Alice", "Laura", "Manuela", "Sofia", "Isabella", "Valentina", "Heloísa", "Luiza", "Júlia", "Lorena", "Lívia", "Maria"],
+                    last: ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins"]
+                }
+            },
+            "Argentina": {
+                male: {
+                    first: ["Mateo", "Thiago", "Benjamín", "Valentino", "Joaquín", "Bautista", "Santiago", "Juan", "Lautaro", "Nicolás", "Alejandro", "Tomás", "Francisco"],
+                    last: ["González", "Rodríguez", "Gómez", "Fernández", "López", "Díaz", "Martínez", "Pérez", "García", "Sánchez", "Romero", "Sosa", "Torres"]
+                },
+                female: {
+                    first: ["Sofía", "Valentina", "Emma", "Martina", "Isabella", "Catalina", "Emilia", "Mía", "Julieta", "Victoria", "Renata", "Lucía", "Alma"],
+                    last: ["González", "Rodríguez", "Gómez", "Fernández", "López", "Díaz", "Martínez", "Pérez", "García", "Sánchez", "Romero", "Sosa", "Torres"]
+                }
+            },
+            "Netherlands": {
+                male: {
+                    first: ["Daan", "Luca", "Sem", "Noah", "Lucas", "Milan", "Levi", "Finn", "Luuk", "Bram", "Mees", "Samuel", "Thijs"],
+                    last: ["De Jong", "Jansen", "De Vries", "Van den Berg", "Van Dijk", "Bakker", "Janssen", "Visser", "Smit", "Meijer", "De Boer", "Mulder", "De Groot"]
+                },
+                female: {
+                    first: ["Emma", "Julia", "Sophie", "Lieke", "Tess", "Sara", "Noa", "Lynn", "Eva", "Mila", "Liv", "Lisa", "Anna"],
+                    last: ["De Jong", "Jansen", "De Vries", "Van den Berg", "Van Dijk", "Bakker", "Janssen", "Visser", "Smit", "Meijer", "De Boer", "Mulder", "De Groot"]
+                }
+            },
+            "Portugal": {
+                male: {
+                    first: ["João", "Santiago", "Francisco", "Afonso", "Duarte", "Tomás", "Martim", "Rodrigo", "Miguel", "Gabriel", "Diogo", "Tiago", "Gonçalo"],
+                    last: ["Silva", "Santos", "Ferreira", "Pereira", "Oliveira", "Costa", "Rodrigues", "Martins", "Jesus", "Sousa", "Fernandes", "Gonçalves", "Gomes"]
+                },
+                female: {
+                    first: ["Maria", "Leonor", "Matilde", "Carolina", "Beatriz", "Ana", "Mariana", "Sofia", "Francisca", "Inês", "Diana", "Madalena", "Clara"],
+                    last: ["Silva", "Santos", "Ferreira", "Pereira", "Oliveira", "Costa", "Rodrigues", "Martins", "Jesus", "Sousa", "Fernandes", "Gonçalves", "Gomes"]
+                }
+            },
+            "Belgium": {
+                male: {
+                    first: ["Lucas", "Liam", "Louis", "Noah", "Jules", "Adam", "Arthur", "Victor", "Nathan", "Mathis", "Gabriel", "Léon", "Hugo"],
+                    last: ["Peeters", "Janssens", "Maes", "Jacobs", "Mertens", "Willems", "Claes", "Goossens", "Wouters", "De Smet", "Dubois", "Lambert", "Martin"]
+                },
+                female: {
+                    first: ["Emma", "Louise", "Olivia", "Mila", "Alice", "Juliette", "Sofia", "Lina", "Marie", "Camille", "Lucie", "Anna", "Élise"],
+                    last: ["Peeters", "Janssens", "Maes", "Jacobs", "Mertens", "Willems", "Claes", "Goossens", "Wouters", "De Smet", "Dubois", "Lambert", "Martin"]
+                }
+            }
+            // Add more countries as needed
+        };
+        
+        // Fallback names for countries not specifically listed
+        const defaultNames = {
+            male: {
+                first: ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew"],
+                last: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez"]
+            },
+            female: {
+                first: ["Emma", "Olivia", "Ava", "Isabella", "Sophia", "Charlotte", "Mia", "Amelia", "Harper", "Evelyn", "Abigail", "Emily", "Elizabeth"],
+                last: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez"]
+            }
+        };
+        
+        // Football Positions
+        const positions = [
+            "Goalkeeper (GK)",
+            "Right Back (RB)",
+            "Center Back (CB)",
+            "Left Back (LB)",
+            "Defensive Midfielder (CDM)",
+            "Central Midfielder (CM)",
+            "Attacking Midfielder (CAM)",
+            "Right Winger (RW)",
+            "Left Winger (LW)",
+            "Striker (ST)"
+        ];
+        
+        // Football Formations
+        const formations = [
+            "4-3-3 (Attacking)",
+            "4-2-3-1",
+            "4-4-2 (Flat)",
+            "4-4-2 (Diamond)",
+            "3-5-2",
+            "3-4-3",
+            "5-3-2",
+            "4-1-4-1",
+            "4-3-3 (Defensive)",
+            "4-5-1"
+        ];
+        
+        // Football clubs by country region
+        const clubsByRegion = {
+            "England": ["Manchester United", "Manchester City", "Liverpool", "Chelsea", "Arsenal", "Tottenham Hotspur", "Leicester City", "West Ham United", "Everton", "Aston Villa"],
+            "Spain": ["Real Madrid", "Barcelona", "Atletico Madrid", "Sevilla", "Valencia", "Real Sociedad", "Villarreal", "Athletic Bilbao", "Real Betis", "Celta Vigo"],
+            "Germany": ["Bayern Munich", "Borussia Dortmund", "RB Leipzig", "Bayer Leverkusen", "Borussia Mönchengladbach", "Wolfsburg", "Eintracht Frankfurt", "Union Berlin", "Stuttgart", "Freiburg"],
+            "Italy": ["Juventus", "Inter Milan", "AC Milan", "Napoli", "Roma", "Lazio", "Atalanta", "Fiorentina", "Torino", "Bologna"],
+            "France": ["Paris Saint-Germain", "Olympique Lyonnais", "Marseille", "Lille", "Monaco", "Nice", "Rennes", "Montpellier", "Strasbourg", "Lens"],
+            "European": ["Ajax", "PSV Eindhoven", "Feyenoord", "Porto", "Benfica", "Sporting CP", "Anderlecht", "Club Brugge", "Celtic", "Rangers"],
+            "South American": ["Boca Juniors", "River Plate", "Flamengo", "Palmeiras", "Santos", "São Paulo", "Corinthians", "Nacional", "Peñarol", "Olimpia"],
+            "Other": ["Al-Hilal", "Al-Nassr", "Guangzhou FC", "Shanghai SIPG", "Urawa Red Diamonds", "Kashima Antlers", "Sydney FC", "Melbourne Victory", "LA Galaxy", "Inter Miami CF"]
+        };
+        
+        // Countries list
+        const countries = [
+            "England", "Spain", "Germany", "Italy", "France", "Brazil", "Argentina", "Netherlands", "Portugal", "Belgium", 
+            "Croatia", "Uruguay", "Colombia", "Denmark", "Switzerland", "Mexico", "Japan", "South Korea", "United States", 
+            "Canada", "Australia", "Nigeria", "Senegal", "Egypt", "Ghana", "Ivory Coast", "Cameroon", "South Africa", 
+            "Morocco", "Tunisia", "Algeria", "Sweden", "Norway", "Finland", "Iceland", "Russia", "Ukraine", "Poland", 
+            "Austria", "Turkey", "Serbia", "Greece", "Scotland", "Wales", "Ireland", "Chile", "Peru", "Ecuador", "Venezuela"
+        ];
+        
+        // Helper functions
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+        
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        function getCountrySpecificName(country, gender) {
+            // Try to get country-specific names
+            if (countryNames[country] && countryNames[country][gender]) {
+                const firstName = getRandomElement(countryNames[country][gender].first);
+                const lastName = getRandomElement(countryNames[country][gender].last);
+                return `${firstName} ${lastName}`;
+            }
+            
+            // Fallback to default names
+            const firstName = getRandomElement(defaultNames[gender].first);
+            const lastName = getRandomElement(defaultNames[gender].last);
+            return `${firstName} ${lastName}`;
+        }
+        
+        function getRandomCountry() {
+            return getRandomElement(countries);
+        }
+        
+        function getRandomClub(country) {
+            // Get clubs by region or use a general category
+            let region = "Other";
+            
+            if (country === "England" || country === "Scotland" || country === "Wales" || country === "Ireland") {
+                region = "England";
+            } else if (country === "Spain") {
+                region = "Spain";
+            } else if (country === "Germany" || country === "Austria") {
+                region = "Germany";
+            } else if (country === "Italy") {
+                region = "Italy";
+            } else if (country === "France") {
+                region = "France";
+            } else if (["Netherlands", "Belgium", "Portugal", "Denmark", "Sweden", "Norway"].includes(country)) {
+                region = "European";
+            } else if (["Brazil", "Argentina", "Uruguay", "Colombia", "Chile", "Peru", "Ecuador", "Venezuela"].includes(country)) {
+                region = "South American";
+            }
+            
+            return getRandomElement(clubsByRegion[region] || clubsByRegion["Other"]);
+        }
+        
+        function getRandomAge(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        function getRandomHeight(gender) {
+            // Generate height in cm based on gender (slightly shorter for female players)
+            const minHeight = gender === "male" ? 170 : 160;
+            const maxHeight = gender === "male" ? 195 : 185;
+            const heightCm = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+            
+            // Convert to feet and inches
+            const feet = Math.floor(heightCm / 30.48);
+            const inches = Math.round((heightCm / 2.54) % 12);
+            return `${feet}'${inches}" (${heightCm} cm)`;
+        }
+        
+        function getRandomWeight(gender) {
+            // Generate weight in kg based on gender
+            const minWeight = gender === "male" ? 65 : 55;
+            const maxWeight = gender === "male" ? 90 : 75;
+            const weightKg = Math.floor(Math.random() * (maxWeight - minWeight + 1)) + minWeight;
+            
+            // Convert to pounds
+            const weightLbs = Math.round(weightKg * 2.20462);
+            return `${weightKg} kg (${weightLbs} lbs)`;
+        }
+        
+        // Populate country dropdowns
+        function populateCountryDropdowns() {
+            const playerCountrySelect = document.getElementById('playerCountrySelect');
+            const managerCountrySelect = document.getElementById('managerCountrySelect');
+            
+            countries.sort().forEach(country => {
+                const playerOption = document.createElement('option');
+                playerOption.value = country;
+                playerOption.textContent = country;
+                playerCountrySelect.appendChild(playerOption);
+                
+                const managerOption = document.createElement('option');
+                managerOption.value = country;
+                managerOption.textContent = country;
+                managerCountrySelect.appendChild(managerOption);
+            });
+        }
+        
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(tabName + 'Tab').classList.add('active');
+            });
+        });
+        
+        // Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    // Populate country dropdowns
+    populateCountryDropdowns();
+    
+    // Set up event listeners for the generate buttons
+    document.getElementById('generatePlayer').addEventListener('click', generatePlayerProfile);
+    document.getElementById('generateManager').addEventListener('click', generateManagerProfile);
+});
+
+// Generate player profile
+function generatePlayerProfile() {
+    const gender = document.getElementById('playerGender').value;
+    const countrySelect = document.getElementById('playerCountrySelect');
+    const selectedCountry = countrySelect.value === 'random' ? getRandomCountry() : countrySelect.value;
+    
+    // Generate player information
+    const playerName = getCountrySpecificName(selectedCountry, gender);
+    const playerAge = getRandomAge(16, 35);
+    const playerHeight = getRandomHeight(gender);
+    const playerWeight = getRandomWeight(gender);
+    const playerPosition = getRandomElement(positions);
+    
+    // Display results
+    document.getElementById('playerName').textContent = playerName;
+    document.getElementById('playerGenderResult').textContent = gender === 'male' ? 'Male' : 'Female';
+    document.getElementById('playerCountry').textContent = selectedCountry;
+    document.getElementById('playerAge').textContent = playerAge;
+    document.getElementById('playerHeight').textContent = playerHeight;
+    document.getElementById('playerWeight').textContent = playerWeight;
+    document.getElementById('playerPosition').textContent = playerPosition;
+    
+    // Show results
+    document.getElementById('playerResult').classList.remove('hidden');
+}
+
+// Generate manager profile
+function generateManagerProfile() {
+    const gender = document.getElementById('managerGender').value;
+    const countrySelect = document.getElementById('managerCountrySelect');
+    const selectedCountry = countrySelect.value === 'random' ? getRandomCountry() : countrySelect.value;
+    
+    // Generate manager information
+    const managerName = getCountrySpecificName(selectedCountry, gender);
+    const managerAge = getRandomAge(35, 65);
+    const managerClub = getRandomClub(selectedCountry);
+    const managerFormation = getRandomElement(formations);
+    
+    // Display results
+    document.getElementById('managerName').textContent = managerName;
+    document.getElementById('managerGenderResult').textContent = gender === 'male' ? 'Male' : 'Female';
+    document.getElementById('managerCountry').textContent = selectedCountry;
+    document.getElementById('managerAge').textContent = managerAge;
+    document.getElementById('managerClub').textContent = managerClub;
+    document.getElementById('managerFormation').textContent = managerFormation;
+    
+    // Show results
+    document.getElementById('managerResult').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
